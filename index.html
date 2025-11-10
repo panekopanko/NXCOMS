@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>♥ NXComs - NetExec Interactive Cheatsheet ♥</title>
+    <meta name="description" content="Interactive cheatsheet for NetExec (nxc) - offensive security tool for Windows/AD environments">
+    <meta name="keywords" content="netexec, nxc, crackmapexec, cme, pentesting, active directory, smb, ldap, winrm">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <h1 class="title">
+                <i class="fas fa-terminal"></i>
+                ♥ NXComs ♥
+            </h1>
+            <p class="subtitle">Interactive NetExec Cheatsheet</p>
+            <p class="description">
+                Curated list of NetExec (nxc) commands for offensive security against Windows/AD environments
+            </p>
+        </div>
+    </header>
+
+    <!-- Search & Filters -->
+    <section class="filters-section" id="filtersSection">
+        <div class="container">
+            <!-- Variables Input Section -->
+            <div class="variables-section">
+                <button class="variables-toggle" id="variablesToggle">
+                    <i class="fas fa-keyboard"></i>
+                    <span>Quick Variables</span>
+                    <i class="fas fa-chevron-down" id="variablesChevron"></i>
+                </button>
+                <div class="variables-inputs" id="variablesInputs">
+                    <div class="variables-grid">
+                        <input type="text" id="varTarget" placeholder="target (e.g., 10.10.10.10)" />
+                        <input type="text" id="varUsername" placeholder="username" />
+                        <input type="text" id="varPassword" placeholder="password" />
+                        <input type="text" id="varDomain" placeholder="domain" />
+                        <input type="text" id="varHash" placeholder="hash" />
+                        <input type="text" id="varCommand" placeholder="command to execute" />
+                    </div>
+                    <button class="clear-variables" id="clearVariables">
+                        <i class="fas fa-eraser"></i> Clear All
+                    </button>
+                </div>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search commands..."
+                    autocomplete="off"
+                >
+                <button id="clearSearch" class="clear-btn" style="display: none;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Compact Filter Pills -->
+            <div class="filter-container compact">
+                <div class="filter-group">
+                    <label class="filter-label">Protocol:</label>
+                    <div class="filter-pills" id="protocolFilters">
+                        <button class="pill active" data-filter="all">All</button>
+                        <button class="pill" data-filter="smb">SMB</button>
+                        <button class="pill" data-filter="ldap">LDAP</button>
+                        <button class="pill" data-filter="winrm">WinRM</button>
+                        <button class="pill" data-filter="ssh">SSH</button>
+                        <button class="pill" data-filter="mssql">MSSQL</button>
+                        <button class="pill" data-filter="ftp">FTP</button>
+                        <button class="pill" data-filter="rdp">RDP</button>
+                        <button class="pill" data-filter="wmi">WMI</button>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label">Category:</label>
+                    <div class="filter-pills" id="categoryFilters">
+                        <button class="pill active" data-filter="all">All</button>
+                        <button class="pill" data-filter="enumeration">Enum</button>
+                        <button class="pill" data-filter="authentication">Auth</button>
+                        <button class="pill" data-filter="credentials">Creds</button>
+                        <button class="pill" data-filter="execution">Exec</button>
+                        <button class="pill" data-filter="exploitation">Exploit</button>
+                        <button class="pill" data-filter="persistence">Persist</button>
+                        <button class="pill" data-filter="lateral">Lateral</button>
+                    </div>
+                </div>
+
+                <div class="results-info">
+                    <span id="resultsCount">0</span> commands
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Commands Grid -->
+    <section class="commands-section">
+        <div class="container">
+            <div id="commandsGrid" class="commands-grid">
+                <!-- Commands will be dynamically inserted here -->
+            </div>
+
+            <!-- No Results Message -->
+            <div id="noResults" class="no-results" style="display: none;">
+                <i class="fas fa-search-minus"></i>
+                <h3>No commands found</h3>
+                <p>Try adjusting your filters or search term</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>
+                ♥ Made with love for the offensive security community ♥
+            </p>
+            <p class="footer-links">
+                <a href="https://github.com/Pennyw0rth/NetExec" target="_blank">
+                    <i class="fab fa-github"></i> NetExec GitHub
+                </a>
+                <span class="separator">|</span>
+                <a href="https://www.netexec.wiki/" target="_blank">
+                    <i class="fas fa-book"></i> Official Wiki
+                </a>
+                <span class="separator">|</span>
+                <a href="https://discord.gg/netexec" target="_blank">
+                    <i class="fab fa-discord"></i> Discord
+                </a>
+            </p>
+            <p class="disclaimer">
+                <i class="fas fa-exclamation-triangle"></i>
+                For authorized security testing only. Always get permission before testing.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Copied to clipboard!</span>
+    </div>
+
+    <!-- Command Details Modal -->
+    <div id="commandModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+                <button class="modal-close" id="modalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-tags" id="modalTags"></div>
+                <div class="modal-section">
+                    <h3><i class="fas fa-info-circle"></i> Description</h3>
+                    <p id="modalDescription"></p>
+                </div>
+                <div class="modal-section">
+                    <h3><i class="fas fa-terminal"></i> Command</h3>
+                    <div class="modal-command">
+                        <button class="copy-btn" id="modalCopyBtn">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                        <code id="modalCommand"></code>
+                    </div>
+                </div>
+                <div class="modal-section" id="modalFlagsSection">
+                    <h3><i class="fas fa-tags"></i> Tags</h3>
+                    <div id="modalFlags"></div>
+                </div>
+                <div class="modal-section">
+                    <h3><i class="fas fa-lightbulb"></i> Tip</h3>
+                    <p class="modal-tip">Click the command to select all text for easy copying. Variables from "Quick Variables" will be automatically replaced when you copy.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/commands.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
